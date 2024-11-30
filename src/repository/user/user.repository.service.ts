@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { AddRoleDto } from 'src/controllers/user/dto/add-role.dto';
@@ -8,6 +8,7 @@ import { User, UserDocument } from 'src/entities/user/user.schema';
 
 @Injectable()
 export class UserRepositoryService {
+  private readonly logger = new Logger(UserRepositoryService.name);
   constructor (
 		@InjectModel('users') private readonly usersModel: Model<UserDocument>,
     @InjectModel('roles') private readonly rolesModel: Model<RoleDocument>

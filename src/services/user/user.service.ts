@@ -1,16 +1,17 @@
-import { BadRequestException, HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { BadRequestException, HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { UserRepositoryService } from '../../repository/user/user.repository.service';
 import { User } from '../../entities/user/user.schema';
 import { CreateUserDto } from '../../controllers/user/dto/create-user.dto';
 import { Types } from 'mongoose';
 import { MailerService } from '@nestjs-modules/mailer';
-import { error } from 'console';
+import { error, log } from 'console';
 import { Roles } from '../../entities/user/role.schema';
 import { UpdateEmployeeDetailsDto } from '../../controllers/user/dto/update-emp-details.dto';
 import { UpdateEmpStatus } from '../../controllers/user/dto/update-emp-status.dto';
 
 @Injectable()
 export class UserService {
+  private readonly logger = new Logger(UserService.name)
   constructor (
 		private readonly userRepositoryService: UserRepositoryService,
 		private readonly mailerService: MailerService,
@@ -37,11 +38,12 @@ export class UserService {
       //send email
       const verificationOTP = await this.sendVerificationEmail(user);
       user['verificationOTP'] = verificationOTP;
+      this.logger.log(`createUser - Verification email sent to ${user.email}`);
 
       const newUser: User = await this.userRepositoryService.createUser(user);
-
       //console.log(newUser);
 
+      this.logger.log(`createUser - User created userid: ${newUser.userId}`)
       return {
         userId: newUser.userId,
         userName: newUser.userName,
@@ -52,7 +54,7 @@ export class UserService {
         isEmailVerified: newUser.isEmailVerified
       };
     } catch (error) {
-      //console.log(error);
+      this.logger.log(error.message);
       return error;
     }
   }
