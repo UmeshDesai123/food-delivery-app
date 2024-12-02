@@ -8,7 +8,7 @@
   ],
   "routes": [
     {
-      "src": "/api/(.*)",
+      "src": "/(.*)",
       "dest": "dist/main.js",
       "methods": [
         "GET",
@@ -17,6 +17,7 @@
         "DELETE"
       ]
     }
-  ]
+  ],
+  "installCommand": "npm install"
   
 }
